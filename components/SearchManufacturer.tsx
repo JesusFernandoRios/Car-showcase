@@ -12,12 +12,15 @@ function SearchManufacturer({
   const [query, setQuery] = useState("");
 
   //check if theres currently a query, if there is return all manufacturers with query values
-  const filteredManufactured =
+  const filteredManufacturers =
     query === ""
       ? manufacturers
-      : manufacturers
-          .filter((item) => item.toLowerCase().replace(/\s+/g, ""))
-          .includes(query.toLowerCase().replace(/\s+/g, ""));
+      : manufacturers.filter((item) =>
+          item
+            .toLowerCase()
+            .replace(/\s+/g, "")
+            .includes(query.toLowerCase().replace(/\s+/g, ""))
+        );
 
   return (
     <div className="search-manufacturer">
@@ -47,28 +50,36 @@ function SearchManufacturer({
             afterLeave={() => setQuery("")}
           >
             <Combobox.Options>
-              {filteredManufactured.length === 0 && query !== "" ? (
+              {filteredManufacturers.map((item) => (
                 <Combobox.Option
-                  value={query}
-                  className="search-manufacturer__option"
+                  className={({ active }) =>
+                    `relative search-manufacturer__option ${
+                      active ? "bg-primary-blue" : "text-gray-900"
+                    } `
+                  }
+                  key={item}
+                  value={item}
                 >
-                  Create "{query}"
+                  {({ selected, active }) => {
+                    (<>
+                      <span
+                        className={`block truncate ${
+                          selected ? "font-medium" : "font-normal"
+                        }`}
+                      >
+                        {item}
+                      </span>
+                      {selected ? (
+                        <span
+                          className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                            active ? "text-white" : "text-teal-600"
+                          }`}
+                        ></span>
+                      ) : null}
+                    </>;)
+                  }}
                 </Combobox.Option>
-              ) : (
-                filteredManufactured.map((item) => (
-                  <Combobox.Option
-                    className={({ active }) =>
-                      `relative search-manufacturer__option ${
-                        active ? "bg-primary-blue" : "text-gray-900"
-                      } `
-                    }
-                    key={item}
-                    value={item}
-                  >
-                    {item}
-                  </Combobox.Option>
-                ))
-              )}
+              ))}
             </Combobox.Options>
           </Transition>
         </div>
